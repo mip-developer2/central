@@ -53,19 +53,14 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if self.peripheral != nil{
+            self.centralManager.cancelPeripheralConnection(self.peripheral)
+        }
+    }
    
-    //textfiled外がタップされた時にキ呼ばれる
-    //override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    //    if(self.focus_textfield.isFirstResponder){
-    //        self.focus_textfield.resignFirstResponder()
-    //    }
-    //}
-    //textfiledがタップされた時に呼ばれる
-    //func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        //self.focus_textfield = textField
-        //print("テキストフィールドがタップされた")
-        //return true
-    //}
+
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         print("textfield touch")
         self.focus_textfield = textField
@@ -153,7 +148,7 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         switch characteristic.uuid{
         case self.charactaristicUUID_name:
-            self.devicename = (String(format: "%@", characteristic.value! as CVarArg))
+            self.devicename = String(data: characteristic.value!, encoding: .utf8)
             print(self.devicename)
             self.deviceNAME.text = self.devicename
         case self.characteristicUUID_id:
